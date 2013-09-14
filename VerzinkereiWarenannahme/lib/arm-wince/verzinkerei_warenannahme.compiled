@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\i386-win32\fpc.exe" Date="1125670419"/>
+  <Params Value=" -MObjFPC -Scghi -CX -O1 -Twince -Parm -Xs -XX -WG -vewnhi -FiC:\Sites\WINCE\VerzinkereiWarenannahme\lib\arm-wince -FuC:\lazarus\components\sqldb\lib\arm-wince\wince -FuC:\lazarus\components\synedit\units\arm-wince\wince -FuC:\lazarus\components\memds\lib\arm-wince\wince -FuC:\lazarus\components\tdbf\lib\arm-wince\wince -FuC:\lazarus\ideintf\units\arm-wince\wince -FuC:\lazarus\lcl\units\arm-wince\wince -FuC:\lazarus\lcl\units\arm-wince -FuC:\lazarus\components\lazutils\lib\arm-wince -FuC:\lazarus\packager\units\arm-wince -FuC:\Sites\WINCE\VerzinkereiWarenannahme\ -FUC:\Sites\WINCE\VerzinkereiWarenannahme\lib\arm-wince\ -l -dLCL -dLCLwince verzinkerei_warenannahme.lpr"/>
+</CONFIG>

@@ -1,0 +1,59 @@
+object CommissionForm: TCommissionForm
+  Left = 890
+  Height = 320
+  Top = 291
+  Width = 240
+  Caption = 'Eingabe Kommission'
+  ClientHeight = 320
+  ClientWidth = 240
+  OnClose = FormClose
+  Position = poScreenCenter
+  LCLVersion = '1.0.12.0'
+  object Label1: TLabel
+    Left = 8
+    Height = 21
+    Top = 48
+    Width = 170
+    Caption = 'Bitte Kommission eingeben:'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -16
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object CommissionEdit: TEdit
+    Left = 8
+    Height = 33
+    Top = 104
+    Width = 192
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -21
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    MaxLength = 5
+    ParentFont = False
+    TabOrder = 0
+  end
+  object ButtonNext: TButton
+    Left = 8
+    Height = 72
+    Top = 168
+    Width = 192
+    Caption = 'WEITER'
+    OnClick = ButtonNextClick
+    TabOrder = 1
+  end
+  object Button1: TButton
+    Left = 8
+    Height = 33
+    Top = 8
+    Width = 83
+    Caption = 'Zurück'
+    OnClick = Button1Click
+    TabOrder = 2
+  end
+end

@@ -1,0 +1,70 @@
+object Form1: TForm1
+  Left = 618
+  Height = 320
+  Top = 230
+  Width = 240
+  Caption = 'Verwiegung'
+  ClientHeight = 320
+  ClientWidth = 240
+  KeyPreview = True
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  OnUTF8KeyPress = FormUTF8KeyPress
+  Position = poScreenCenter
+  LCLVersion = '1.0.12.0'
+  object ButtonBarcode: TButton
+    Left = 0
+    Height = 57
+    Top = 0
+    Width = 240
+    Caption = 'Barcode Etikett'
+    OnClick = ButtonBarcodeClick
+    TabOrder = 0
+  end
+  object ButtonTara: TButton
+    Left = 0
+    Height = 57
+    Top = 112
+    Width = 240
+    Caption = 'Tara'
+    OnClick = ButtonTaraClick
+    TabOrder = 1
+  end
+  object ButtonCategory: TButton
+    Left = 0
+    Height = 57
+    Top = 168
+    Width = 240
+    Caption = 'Kategorie'
+    OnClick = ButtonCategoryClick
+    TabOrder = 2
+  end
+  object ButtonSave: TButton
+    Left = 0
+    Height = 33
+    Top = 287
+    Width = 240
+    Caption = 'Speichern und Etikett drucken'
+    OnClick = ButtonSaveClick
+    TabOrder = 3
+  end
+  object Edit1: TEdit
+    Left = 72
+    Height = 0
+    Top = 240
+    Width = 0
+    AutoSize = False
+    OnChange = Edit1Change
+    TabOrder = 4
+  end
+  object ButtonPID: TButton
+    Left = 0
+    Height = 57
+    Top = 56
+    Width = 240
+    Caption = 'Personalkennung'
+    OnClick = ButtonPIDClick
+    TabOrder = 5
+  end
+end

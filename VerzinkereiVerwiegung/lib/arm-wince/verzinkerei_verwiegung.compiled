@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\i386-win32\fpc.exe" Date="1125670419"/>
+  <Params Value=" -MObjFPC -Scghi -CX -O1 -Twince -Parm -XX -vewnhi -FiC:\Sites\WINCE\VerzinkereiVerwiegung\lib\arm-wince -FuC:\lazarus\lcl\units\arm-wince\wince -FuC:\lazarus\lcl\units\arm-wince -FuC:\lazarus\components\lazutils\lib\arm-wince -FuC:\lazarus\packager\units\arm-wince -FuC:\Sites\WINCE\VerzinkereiVerwiegung\ -FUC:\Sites\WINCE\VerzinkereiVerwiegung\lib\arm-wince\ -l -dLCL -dLCLwince verzinkerei_verwiegung.lpr"/>
+</CONFIG>

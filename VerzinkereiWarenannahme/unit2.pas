@@ -1,0 +1,320 @@
+unit Unit2;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, fpjson, jsonparser, fphttpclient,
+  Forms, Controls, Graphics, Dialogs, StdCtrls, LCLType;
+
+type
+
+  { TScanForm }
+
+  TScanForm = class(TForm)
+    ButtonBack: TButton;
+    Barcode: TEdit;
+    KommHeader1: TLabel;
+    Label1: TLabel;
+    Label3: TLabel;
+    CommissionLabel: TLabel;
+    procedure BarcodeChange(Sender: TObject);
+    procedure BarcodeChangeOrig(Sender: TObject);
+    procedure BarcodeKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+      );
+    procedure ButtonBackClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+
+  private
+    { private declarations }
+  public
+    { public declarations }
+  end;
+
+var
+  Commission: string;
+
+implementation
+
+{$R *.lfm}
+
+uses unit1;
+
+{ TScanForm }
+
+procedure TScanForm.ButtonBackClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TScanForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+     Commission:='';
+     unit1.BundleStart.Timer1.Enabled:=True;
+end;
+
+procedure TScanForm.FormCreate(Sender: TObject);
+
+begin
+     unit1.BundleStart.Timer1.Enabled:=False;
+     if Commission <> '' then
+        begin
+             CommissionLabel.Caption:=Commission;
+        end
+     else
+         begin
+              self.Destroy;
+         end;
+end;
+
+procedure TScanForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+   //if (IntToHex(Key,16) == $00000000000000D1) then
+  //Label3.Caption:= IntToStr(Key);
+  {
+  setLength(MyVariable, Length(MyVariable)+1);
+  MyVariable[High(MyVariable)]:=Key;
+  if '209' <> (IntToStr(Key)) then
+     begin
+          i:=0;
+          //self.OnKeyDown:= nil;
+          //Barcode.OnChange:=@self.ClearBarcode;
+          //Barcode.Text:='';
+          //Barcode.setFocus;
+          //showmessage('Nur Scantaste verwenden');
+          //
+     end
+  else
+     begin
+          //self.OnKeyDown:= nil;
+          //Barcode.OnChange:=nil;
+          //Barcode.Text:='';
+
+          //i:=i+1;
+
+          //Label3.Caption:= IntToStr(i);
+          //Barcode.OnChange:=@self.BarcodeChange;
+     end;
+
+
+
+   //showmessage(Chr(Hi(Key)));
+  }
+end;
+
+procedure TScanForm.BarcodeChangeOrig(Sender: TObject);
+
+var
+  P: TJSONParser;
+  J: TJSONData;
+  t: TFPHTTPClient;
+  List: TStringList;
+  MyResult: string;
+  MyTime: TDateTime;
+  C: Char;
+begin
+  Barcode.Enabled:=False;
+  if Length(Barcode.Text) <= 10 then
+     begin
+          Barcode.OnChange:=nil;
+          Barcode.Clear;
+          Barcode.OnChange:=@self.BarcodeChange;
+          Barcode.Enabled:=True;
+          Barcode.setFocus;
+          Exit;
+     end;
+
+  //showmessage(Settings.ServerURL);
+  try
+
+     try
+       begin
+            if Length(Commission) = 0 then
+               begin
+
+                    if MessageDlg('Bestätigung', 'Wirklich Neue Anlieferung?', mtConfirmation,
+                       [mbYes, mbNo],0) = mrYes
+                    then
+                    begin
+                         T:= TFPHTTPClient.create(nil);
+                         MyResult:= Settings.ServerURL+'meiser_deliveries.json?barcode='+EncodeURLElement(Barcode.Text);
+                         MyResult:=T.Post(MyResult);
+                    end;
+               end
+            else
+               begin
+                    T:= TFPHTTPClient.create(nil);
+
+
+                    //for C in Barcode.Text do
+                    //showmessage(C);
+
+
+                    MyResult:= Settings.ServerURL+'meiser_deliveries/bundles.json?commission='+EncodeURLElement(Commission)+'&barcode='+EncodeURLElement(Barcode.Text);
+                    MyResult:=T.Post(MyResult);
+               end;
+
+       end;
+     Except
+           on E: Exception do
+           begin
+               //exit(False);
+           end;
+     end;
+
+  finally
+          case T.ResponseStatusCode of
+          210:
+            begin
+                 //showmessage('Reconnected');
+            end;
+          200:
+            begin
+                 P:=TJSONParser.Create(MyResult);
+                 J:=P.Parse;
+                 //only
+
+                 case Length(J.AsString) of
+                 1:
+                      begin
+                           // Success saving Barcode
+                           //MyResult:= J.AsString;
+                           //if MyResult = 1
+                           showmessage('Erfolgreich angelegt, da Server: '+MyResult);
+
+                      end;
+                 2:
+                      begin
+                           if J.AsString = 'E1' then
+                           begin
+                                showmessage('Meldung bei Länge 2');
+                           end;
+                      end;
+
+                 5:
+                      begin
+                           // HTTP Request returned commission
+                           Commission:=J.AsString;
+                           CommissionLabel.Caption:=Commission;
+                      end;
+
+                 else
+                     begin
+                           begin
+                                showmessage(J.AsString);
+                           end;
+                      end;
+                 end;
+            //showmessage('bevor free');
+            T.Free;
+            end;
+          else
+              showmessage('Verbindungsprobleme. Erneut scannen');
+          end;
+
+  end;
+  Barcode.OnChange:=nil;
+  Barcode.Clear;
+  Barcode.OnChange:=@self.BarcodeChange;
+  Barcode.Enabled:=True;
+  Barcode.setFocus;
+end;
+
+procedure TScanForm.BarcodeChange(Sender: TObject);
+
+var
+  t: TFPHTTPClient;
+  MyResult: string;
+
+begin
+
+  Barcode.Enabled:=False;
+  if Length(Barcode.Text) <= 0 then
+     begin
+          Barcode.OnChange:=nil;
+          Barcode.Clear;
+          Barcode.OnChange:=@self.BarcodeChange;
+          Barcode.Enabled:=True;
+          Barcode.setFocus;
+          Exit;
+  end;
+
+  if Length(Commission) = 0 then
+     begin
+          showmessage('keine Kommission');
+     end
+
+  else
+
+      begin
+
+          //Abspeichern Barcode
+
+          try
+
+
+             T:= TFPHTTPClient.create(nil);
+
+             try
+
+                MyResult:= Settings.ServerURL+'scanner/wa/barcode/new?commission='+EncodeURLElement(Commission)+'&barcode='+EncodeURLElement(Barcode.Text);
+                MyResult:=T.Post(MyResult);
+                if MyResult = 'OK' then
+                   begin
+                        //showmessage('ging');
+                   end
+                else
+                      begin
+                           if MessageDlg('Bestätigung', MyResult, mtConfirmation,
+                           [mbYes, mbNo],0) = mrYes
+                           then
+                               begin
+
+                                    MyResult:= Settings.ServerURL+'scanner/wa/barcode/update?commission='+EncodeURLElement(Commission)+'&barcode='+EncodeURLElement(Barcode.Text);
+                                    MyResult:=T.Post(MyResult);
+
+                                    if MyResult = 'OK' then
+                                       begin
+                                            //showmessage('didit');
+                                       end
+                                    else
+                                        begin
+                                             showmessage(MyResult);
+                                        end;
+                               end;
+                      end;
+
+             finally
+                    T.Free;
+             end;
+
+          Except
+                on E: Exception do
+                begin
+                     showmessage('Verbindungsprobleme. Bitte erneut versuchen');
+                     end;
+          end;
+
+
+      end;
+
+  Barcode.OnChange:=nil;
+  Barcode.Clear;
+  Barcode.OnChange:=@self.BarcodeChange;
+  Barcode.Enabled:=True;
+  Barcode.setFocus;
+
+end;
+
+procedure TScanForm.BarcodeKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  //showmessage(Barcode.Text);
+end;
+
+end.
+

@@ -1,0 +1,289 @@
+unit Unit1;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  INIFiles, LCLType, fphttpclient, fpjson, jsonparser, unit2, unit3, unit4;
+
+type
+
+
+  ClientConfig = Record
+    Username, Password, ServerIP, ServerURL : string;
+  end;
+
+  TCategory = Record
+    id, no, desciption: string;
+  end;
+
+  TWeighting = Record
+    barcode, pid, tara, category : string;
+  end;
+
+  { TForm1 }
+
+  TForm1 = class(TForm)
+    Button1: TButton;
+    ButtonBarcode: TButton;
+    ButtonTara: TButton;
+    ButtonPID: TButton;
+    Edit1: TEdit;
+    ButtonCategory: TButton;
+    ButtonSave: TButton;
+    procedure ButtonBarcodeClick(Sender: TObject);
+    procedure ButtonPIDClick(Sender: TObject);
+    procedure ButtonSaveClick(Sender: TObject);
+    procedure ButtonTaraClick(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
+    procedure EditPIDKeyPress(Sender: TObject; var Key: char);
+    procedure FormClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+    procedure GetCategories(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure ButtonCategoryClick(Sender: TObject);
+  private
+    { private declarations }
+  public
+    { public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+  INI: TINIFile;
+  Settings: ClientConfig;
+  w: TWeighting;
+  j: TJSONData;
+  Categories: array of TCategory;
+  myCombo: TComboBox;
+
+
+const
+  //some of consts already found in Windows
+  SIPF_OFF    =	$00000000;
+  SIPF_ON     =	$00000001;
+  SIPF_DOCKED =	$00000002;
+  SIPF_LOCKED =	$00000004;
+
+
+
+//function SipShowIM(IPStatus:DWORD):Integer; stdcall; external 'coredll.dll' name 'SipShowIM';
+
+
+implementation
+
+
+{$R *.lfm}
+
+{ TForm1 }
+
+
+procedure TForm1.ButtonTaraClick(Sender: TObject);
+var
+  myForm: TForm3;
+begin
+  //ButtonPID.Color:=clNavy;
+  myForm:= TForm3.create(nil);
+  myForm.showmodal;
+end;
+
+procedure TForm1.Edit1Change(Sender: TObject);
+begin
+  SelectNext(ActiveControl, true, true);
+  if Edit1.Text <> '' then
+  begin
+       ButtonBarcode.Caption:= 'Barcode: '+Edit1.Text;
+       w.barcode:=Edit1.Text;
+  end;
+end;
+
+procedure TForm1.EditPIDKeyPress(Sender: TObject; var Key: char);
+begin
+  //if Key = #13 then SipShowIM(SIPF_OFF);
+end;
+
+procedure TForm1.FormClick(Sender: TObject);
+begin
+  //SipShowIM(SIPF_OFF)
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  I: Integer;
+begin
+  //SipShowIM(SIPF_OFF);
+  self.GetCategories(Sender);
+  ButtonCategory.Visible:=False;
+
+
+
+  myCombo:=TComboBox.Create(self);
+  myCombo.Parent:=self;
+  myCombo.Left:=ButtonCategory.Left;
+  myCombo.Top:=ButtonCategory.Top+30;
+  myCombo.Width:=ButtonCategory.Width;
+  myCombo.Height:=ButtonCategory.Height;
+  myCombo.Text:='Bitte Kategorie wählen';
+  myCombo.Visible:=True;
+  myCombo.ReadOnly:=True;
+
+  myCombo.Show;
+  For I:=0 to J.Count-1 do
+  begin
+       myCombo.AddItem(TJSONObject(J.Items[I].Items[2]).AsString + '  '+TJSONObject(J.Items[I].Items[0]).AsString, TObject(TJSONObject(J.Items[I].Items[1]).AsInteger));
+  end;
+
+end;
+
+procedure TForm1.FormUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+begin
+  if UTF8Key = 'q' then Close;
+end;
+
+
+procedure TForm1.GetCategories(Sender: TObject);
+
+var
+   T: TFPHTTPClient;
+   MyResult: string;
+
+   I: Integer;
+   N: Integer;
+   P: TJSONParser;
+begin
+
+
+     try
+        begin
+           T:= TFPHttpClient.Create(Nil);
+           try
+              MyResult:=T.Get(Settings.ServerURL+'scanner/waage/categories');
+
+              P:= TJSONParser.create(MyResult);
+              J:= P.Parse;
+
+              //geht bei null los
+              //showmessage(TJSONObject(J.Items[1]).Names[1]);
+
+              //For I:=0 to J.Count-1 do
+              //begin
+
+                 //showmessage('Datensatz: '+IntToStr(I));
+                 //for N:=0 to J.Items[I].Count-1 do
+                 //begin
+                    //showmessage(TJSONObject(J.Items[I]).Names[N]+ ' mit '+ TJSONObject(J.Items[I].Items[N]).AsString);
+                 //end;
+
+
+                 //showmessage(TJSONObject(J).Names[I]);
+                 //for N:=0 to J.Items[I].Count do
+                 //begin
+                 //   showmessage(TJSONObject(J.Items[I]).Names[I]);
+                 //end;
+                 //DumpJSONData(J.Items[I],False);
+
+
+              //end;
+              //showmessage(MyResult);
+
+           finally
+              T.Free;
+           end;
+        end;
+     Except
+           on E: Exception do
+           begin
+               showmessage('Verbindungsprobleme. Bitte Anwendung erneut starten');
+               //Application.Terminate;
+           end;
+     end;
+
+
+end;
+
+procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+  );
+begin
+     //if '3' <> (IntToHex(Key,16)) then
+     //begin
+     //Edit1.Enabled:=False;
+
+     //if ((IntToStr(Key)) = (IntToStr(VK_RETURN))) then SipShowIM(SIPF_OFF);
+
+
+     if IntToStr(Key) = '209' then
+     begin
+          //showmessage('KDown: '+IntToStr(Key));
+          //Edit1.OnChange:=nil;
+          //Edit1.Enabled:=True;
+          Edit1.Clear;
+          Edit1.SetFocus;
+     end;
+     //end;
+end;
+
+procedure TForm1.ButtonCategoryClick(Sender: TObject);
+var
+  myForm: TForm4;
+begin
+  //ButtonPID.Color:=clNavy;
+  myForm:= TForm4.create(nil);
+  myForm.showmodal;
+end;
+
+procedure TForm1.ButtonBarcodeClick(Sender: TObject);
+
+begin
+
+end;
+
+procedure TForm1.ButtonPIDClick(Sender: TObject);
+var
+  myForm: TForm2;
+begin
+  //ButtonPID.Color:=clNavy;
+  myForm:= TForm2.create(nil);
+  myForm.showmodal;
+end;
+
+procedure TForm1.ButtonSaveClick(Sender: TObject);
+var
+  T: TFPHttpClient;
+  MyResult: string;
+begin
+  w.category:=IntToStr(Integer(myCombo.Items.Objects[myCombo.ItemIndex]));
+  //showmessage('Barcode: '+w.barcode+', PID: '+w.pid+', Tara: '+w.tara+', Category: '+w.category);
+  try
+        begin
+           T:= TFPHttpClient.Create(Nil);
+           try
+              MyResult:=T.Post(Settings.ServerURL+'scanner/waage/weighting/new?barcode='+EncodeURLElement(w.barcode)+
+              '&pid='+EncodeURLElement(w.pid)+'&weight_tara='+EncodeURLElement(w.tara)+'&sort_list='+EncodeURLElement(w.category));
+
+              showmessage(MyResult);
+
+           finally
+              T.Free;
+           end;
+        end;
+     Except
+           on E: Exception do
+           begin
+               showmessage('Verbindungsprobleme. Bitte Anwendung erneut starten');
+               //Application.Terminate;
+           end;
+     end;
+end;
+
+initialization
+  INI:= TINIFile.Create(Application.Location+'\config.ini');
+  Settings.ServerIP:=INI.ReadString('Server','ServerIP','');
+  Settings.Username:=INI.ReadString('Server','Username','');
+  Settings.Password:=INI.ReadString('Server','Password','');
+  Settings.ServerURL:='http://'+Settings.Username+':'+Settings.Password+'@'+Settings.ServerIP+'/';
+end.
+

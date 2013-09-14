@@ -1,0 +1,97 @@
+object ScanForm: TScanForm
+  Left = 632
+  Height = 320
+  Top = 290
+  Width = 240
+  Caption = 'Bundetiketten scannen'
+  ClientHeight = 320
+  ClientWidth = 240
+  Color = clForm
+  OnClose = FormClose
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '1.0.12.0'
+  object ButtonBack: TButton
+    Left = 8
+    Height = 33
+    Top = 8
+    Width = 83
+    Caption = 'Zurück'
+    OnClick = ButtonBackClick
+    TabOrder = 1
+  end
+  object KommHeader1: TLabel
+    Left = 8
+    Height = 43
+    Top = 280
+    Width = 117
+    Caption = 'Schritt 2'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -35
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 41
+    Top = 48
+    Width = 133
+    Caption = 'Bitte Bundetiketten für'#13#10'Kommission scannen:'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -16
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Barcode: TEdit
+    Left = 8
+    Height = 33
+    Top = 104
+    Width = 208
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -21
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    MaxLength = 30
+    OnChange = BarcodeChange
+    ParentFont = False
+    TabOrder = 0
+  end
+  object Label3: TLabel
+    Left = 8
+    Height = 21
+    Top = 176
+    Width = 151
+    Caption = 'Vergebene Kommission:'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -16
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object CommissionLabel: TLabel
+    Left = 8
+    Height = 41
+    Top = 208
+    Width = 205
+    Caption = 'Die Kommission wird automatisch '#13#10'vergeben und hier angezeigt'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -16
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+    WordWrap = True
+  end
+end
